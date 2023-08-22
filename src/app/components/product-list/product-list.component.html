@@ -1,0 +1,77 @@
+<div class="main-content">
+    <div class="section-content section-content-p30">
+
+        <h4 class="m-4">{{ currentCategoryName }}</h4>
+        <div class="container-fluid">
+            <div class="row">
+
+                <!-- loop over the collection of products -->
+                <div *ngFor="let tempProduct of products" class="col-md-3">
+
+                    <div class="product-box">
+                       <a routerLink="/products/{{tempProduct.id}}">
+                        <img src="{{ tempProduct.imageUrl }}" class="img-responsive">
+                       </a>
+
+                            <a routerLink="/products/{{tempProduct.id}}" class="text-decoration-none mr-3 d-block">
+                                <h1>{{ tempProduct.name }}</h1>
+                            </a>
+
+                        <div class="price">{{ tempProduct.unitPrice | currency:'USD' }}</div>
+                        <button (click)="addToCard(tempProduct)" class="btn btn-primary btn-sm">Add to cart</button>
+                    </div>
+
+                </div>
+
+                <!-- if no product found  -->
+                <div class="d-flex justify-content-center align-items-center" >
+                    <div *ngIf="products?.length==0" class="text-center">
+                      <h1>The Product Not found yet!</h1>
+                      <h4 class="my-3">You can Search Again</h4>
+                      <app-search class="my-3"></app-search>
+                      <div class="text-center">
+                        <p class="my-4 fs-4">Or</p>
+                        <button type="button" class="au-btn-submit  w-auto p-3">
+                          <a routerLink="/category" routerLinkActive="active-link" class="text-white text-decoration-none">Go to Home page</a>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+
+            <div class="footer-pagination">
+                <div class="row">
+                    <div class="col-md-6"></div>
+                    <div class="col-md-6">
+                      <div class="row">
+
+                        <div class="col-md-9" style="padding-left: 30%;">
+                          <ngb-pagination [(page)]="thePageNumber"
+                                          [pageSize]="thePageSize"
+                                          [collectionSize]="theTotalElements"
+                                          [maxSize]="5"
+                                          [boundaryLinks]="true"
+                                          (pageChange)="listProducts()">
+                          </ngb-pagination>
+                        </div>
+
+                        <div class="col-md-3" style="text-align:right;">
+                            <span>Page Size:</span>
+                            <select #myPaageSelect (change)="updatePageSize(myPaageSelect.value)">
+                              <option selected="true">5</option>
+                              <option>10</option>
+                              <option>20</option>
+                              <option>30</option>
+                            </select>
+                        </div>
+
+                      </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
