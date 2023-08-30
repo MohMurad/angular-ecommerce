@@ -28,6 +28,8 @@ export class ChekoutComponent implements OnInit {
   shippingAdressStates: State[] = [];
   billingAdressStates: State[] = [];
 
+  storage:Storage=sessionStorage;
+
   constructor(private formBuilder: FormBuilder,
     private checkoutHandling: CheckoutHandlingService,
     private cartService:CartService,
@@ -36,6 +38,8 @@ export class ChekoutComponent implements OnInit {
 
   ngOnInit(): void {
 
+    //retrive the email from sessionStorage
+    const theEmail=JSON.parse(this.storage.getItem('userEmail')!);
     this.reviewCartDetails();
 
     this.checkoutFormGroup = this.formBuilder.group({
@@ -50,7 +54,7 @@ export class ChekoutComponent implements OnInit {
          Validators.minLength(2),
           CustomValidator.notOnlyWhitespace.bind(CustomValidator)]),
 
-        email:new FormControl('',
+        email:new FormControl(theEmail,
         [Validators.required,
           Validators.pattern(`^[a-zA-Z0-9._%+-]+@gmail\.com$`),
           CustomValidator.notOnlyWhitespace.bind(CustomValidator)]),

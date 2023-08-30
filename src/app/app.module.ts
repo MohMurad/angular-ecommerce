@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { ProductListComponent } from './components/product-list/product-list.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ProductService } from './services/product.service';
 import { Router, RouterModule, Routes } from '@angular/router';
 import { ProductCategoryMenuComponent } from './components/product-category-menu/product-category-menu.component';
@@ -28,6 +28,8 @@ import {
 import { OktaAuth } from '@okta/okta-auth-js';
 import myAppConfig from './config/my-app-config';
 import { MembersComponent } from './components/members/members.component';
+import { OrderHistoryComponent } from './components/order-history/order-history.component';
+import { AuthInterceptorService } from './services/auth-interceptor.service';
 
 const oktaConfig = myAppConfig.oidc;
 const oktaAuth = new OktaAuth(oktaConfig);
@@ -43,6 +45,10 @@ function sendToLoginPage(oktaAuth: OktaAuth, injector: Injector) {
 };
 
 const routes: Routes = [
+  {
+    path: 'order-history', component: OrderHistoryComponent, canActivate: [OktaAuthGuard],
+    data: { onAuthRequired: sendToLoginPage }
+  },
   {
     path: 'members', component: MembersComponent, canActivate: [OktaAuthGuard],
     data: { onAuthRequired: sendToLoginPage }
@@ -72,6 +78,7 @@ const routes: Routes = [
     LoginComponent,
     LoginStatusComponent,
     MembersComponent,
+    OrderHistoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,7 +88,9 @@ const routes: Routes = [
     ReactiveFormsModule,
     OktaAuthModule
   ],
-  providers: [ProductService, { provide: OKTA_CONFIG, useValue: { oktaAuth } }],
+  providers: [ProductService, { provide: OKTA_CONFIG, useValue: { oktaAuth } },
+                                                                      //note we using mult:true we could have 0 to many imterceptions
+              {provide:HTTP_INTERCEPTORS,useClass:AuthInterceptorService,multi:true}],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
